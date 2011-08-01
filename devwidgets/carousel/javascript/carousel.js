@@ -255,10 +255,10 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai){
                 if (group["sakai:group-description"] && group["sakai:group-description"].length) {
                     obj.description = group["sakai:group-description"];
                 }
-                if (group["sakai:tags"] && group["sakai:tags"].length) {
-                    obj.tags = sakai.api.Util.formatTagsExcludeLocation(group["sakai:tags"]);
+                if (group.basic && group.basic.elements && group.basic.elements["sakai:tags"]){
+                  obj.tags = sakai.api.Util.formatTagsExcludeLocation(group.basic.elements["sakai:tags"].value);
                 }
-                if (group.picture){
+                if (group.basic.elements.picture){
                     obj.picture = sakai.api.Groups.getProfilePicture(group);
                 }
                 obj.counts = group.counts;
