@@ -138,6 +138,30 @@ require(['jquery', 'sakai/sakai.api.core', '/devwidgets/documentviewer/lib/docum
             });
         };
 
+
+        var renderMediaServerPlayer = function(data){
+            sakai.api.Util.TemplateRenderer("documentviewer_video_template", {"tuid":tuid}, $documentviewerPreview);
+
+            $.ajax({
+                url: '/var/media?pid=' + data['_path'],
+                cache: false,
+                success: function(data){
+                    if (data['status'] === 'processing') {
+                        $("#documentviewer_video_" + tuid).html("Video is currently converting.  Just one moment.");
+                    } else if (data['status'] === 'ready') {
+                        $("#documentviewer_video_" + tuid).html(data['player']);
+                    } else {
+                        $("#documentviewer_video_" + tuid).html("Video not currently available.  Sorry");
+                    }
+                },
+                error: function(data){
+                    $("#documentviewer_video_" + tuid).html("Video not currently available.  Sorry");
+                },
+            });
+
+
+        };
+
         var renderVideoPlayer = function(url, preview_avatar){
             var so = createSWFObject(false, {}, {});
             so.addVariable('file', url);
@@ -269,6 +293,8 @@ require(['jquery', 'sakai/sakai.api.core', '/devwidgets/documentviewer/lib/docum
 
             if (sakai.api.Content.isKalturaPlayerSupported(mimeType)) {
                 renderKalturaPlayer(data);
+            } else if (sakai.api.Content.isMediaServerSupported(mimeType)) {
+                renderMediaServerPlayer(data);
             } else if (sakai.api.Content.isJwPlayerSupportedVideo(mimeType)){            
                 renderVideoPlayer(getPath(data));
             } else if (sakai.api.Content.isJwPlayerSupportedAudio(mimeType)) {

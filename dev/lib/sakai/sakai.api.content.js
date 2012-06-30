@@ -1127,6 +1127,11 @@ define(
             return sakai_conf.kaltura && sakai_conf.kaltura.enabled && (mimeType === "kaltura/video" || mimeType === "kaltura/audio");
         },
 
+        isMediaServerSupported : function(mimeType) {
+            var prefix = "application/x-media";
+            return (mimeType.substring(0, prefix.length) === prefix);
+        },
+
         getCreatorProfile : function(content, callback) {
             $.ajax({
                 url: "/~" + content["sakai:pool-content-created-for"] + "/public/authprofile.infinity.json",
@@ -1153,6 +1158,7 @@ define(
                     mimeType.substring(0,5) === "text/" ||
                     mimeType === "application/x-shockwave-flash" ||
                     sakai_content.isKalturaPlayerSupported(mimeType) ||
+                    sakai_content.isMediaServerSupported(mimeType) ||
                     sakai_content.isJwPlayerSupportedVideo(mimeType)  ||
                     sakai_content.isJwPlayerSupportedAudio(mimeType)) {
                 result = true;
