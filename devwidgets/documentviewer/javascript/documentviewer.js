@@ -139,19 +139,28 @@ require(['jquery', 'sakai/sakai.api.core', '/devwidgets/documentviewer/lib/docum
         };
 
 
-        var renderMediaServerPlayer = function(data){
-            sakai.api.Util.TemplateRenderer("documentviewer_video_template", {"tuid":tuid}, $documentviewerPreview);
+        var renderMediaServerPlayer = function(content, polling) {
+            if (!polling) {
+                sakai.api.Util.TemplateRenderer("documentviewer_video_template", {"tuid":tuid}, $documentviewerPreview);
+            }
 
             $('#contentpreview_download_button').hide();
             $('#ew_revhistory ~ hr').hide()
             $('#ew_revhistory').hide()
 
             $.ajax({
-                url: '/var/media?pid=' + data['_path'],
+                url: '/var/media?pid=' + content['_path'],
                 cache: false,
                 success: function(data){
                     if (data['status'] === 'processing') {
-                        $("#documentviewer_video_" + tuid).html("Video is currently converting.  Just one moment.");
+                        if (!polling) {
+                            var htmlCode = '<div class="documentviewer_media_processing">';
+                            htmlCode += '<h1>This video is currently converting.  Just one moment.</h1>';
+                            htmlCode += '<div><img src="/dev/images/progress_bar.gif"/></div></div>';
+
+                            $("#documentviewer_video_" + tuid).html(htmlCode);
+                        }
+                        setTimeout(function () { renderMediaServerPlayer(content, true) }, 60000);
                     } else if (data['status'] === 'ready') {
                         $("#documentviewer_video_" + tuid).html(data['player']);
                     } else {
