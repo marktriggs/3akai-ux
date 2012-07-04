@@ -142,6 +142,10 @@ require(['jquery', 'sakai/sakai.api.core', '/devwidgets/documentviewer/lib/docum
         var renderMediaServerPlayer = function(data){
             sakai.api.Util.TemplateRenderer("documentviewer_video_template", {"tuid":tuid}, $documentviewerPreview);
 
+            $('#contentpreview_download_button').hide();
+            $('#ew_revhistory ~ hr').hide()
+            $('#ew_revhistory').hide()
+
             $.ajax({
                 url: '/var/media?pid=' + data['_path'],
                 cache: false,
