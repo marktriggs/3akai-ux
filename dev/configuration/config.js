@@ -823,6 +823,11 @@ define(function(){
                 URL: "/dev/images/mimetypes/sound.png",
                 description: "SOUND_FILE"
             },
+            "application/x-media-brightcove": {
+                cssClass: "icon-video-sprite",
+                URL: "/dev/images/mimetypes/video.png",
+                description: "VIDEO_FILE"
+            },
             "other": {
                 cssClass: "icon-unknown-sprite",
                 URL: "/dev/images/mimetypes/unknown.png",
