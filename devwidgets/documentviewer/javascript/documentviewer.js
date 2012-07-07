@@ -164,11 +164,12 @@ require(['jquery', 'sakai/sakai.api.core', '/devwidgets/documentviewer/lib/docum
                     } else if (data['status'] === 'ready') {
                         $("#documentviewer_video_" + tuid).html(data['player']);
                     } else {
-                        $("#documentviewer_video_" + tuid).html("Video not currently available.  Sorry");
+                        $("#documentviewer_video_" + tuid).html("This video couldn't be found on the remote media server.");
                     }
                 },
                 error: function(data){
-                    $("#documentviewer_video_" + tuid).html("Video not currently available.  Sorry");
+                    $("#documentviewer_video_" + tuid).html("There was a problem contacting the remote media server." +
+                                                            "  Please try again later.");
                 },
             });
 
