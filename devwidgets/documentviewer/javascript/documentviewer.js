@@ -162,7 +162,23 @@ require(['jquery', 'sakai/sakai.api.core', '/devwidgets/documentviewer/lib/docum
                         }
                         setTimeout(function () { renderMediaServerPlayer(content, true) }, 60000);
                     } else if (data['status'] === 'ready') {
+
+                        var loader = function (scripts, init) {
+                            if (scripts.length === 0) {
+                                eval(init);
+                            } else {
+                                $.getScript(scripts[0], function () {
+                                    loader(scripts.slice(1), init);
+                                });
+                            }
+                        }
+
                         $("#documentviewer_video_" + tuid).html(data['player']);
+
+                        if (data['scripts'] && data['init']) {
+                            // Load all the player's JS dependencies and fire off its initialization code
+                            loader(data['scripts'], data['init']);
+                        }
                     } else {
                         $("#documentviewer_video_" + tuid).html("This video couldn't be found on the remote media server.");
                     }
