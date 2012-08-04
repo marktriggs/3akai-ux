@@ -10,10 +10,13 @@
         },
         "es_ES": {
             "bundle": "/devwidgets/mylibrary/bundles/es_ES.properties"
+        },
+        "fr_FR": {
+            "bundle": "/devwidgets/mylibrary/bundles/fr_FR.properties"
         }
     },
     "id": "mylibrary",
     "personalportal": false,
     "type": "sakai",
-    "url": "/devwidgets/mylibrary/mylibrary.html"    
+    "url": "/devwidgets/mylibrary/mylibrary.html"
 }

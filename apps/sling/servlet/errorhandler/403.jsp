@@ -8,7 +8,7 @@ response.setStatus(403);
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <!-- Sakai 3 R&amp;D - Access denied -->
+
         <title></title>
 
         <!-- Sakai Core CSS -->
@@ -34,7 +34,7 @@ response.setStatus(403);
                 </div>
             </div>
         </div>
-        <div class="fl-fix fl-centered fixed-container s3d-main-container">
+        <div class="fl-fix fl-centered fixed-container s3d-main-container" role="main">
             <div id="error_content">
                 <div id="error_content_second_column">
                     <div id="error_sign_in_button">

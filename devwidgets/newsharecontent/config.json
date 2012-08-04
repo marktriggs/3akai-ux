@@ -14,9 +14,16 @@
         },
         "es_ES": {
             "bundle": "/devwidgets/newsharecontent/bundles/es_ES.properties"
+        },
+        "fr_FR": {
+            "bundle": "/devwidgets/newsharecontent/bundles/fr_FR.properties"
         }
     },
     "id": "newsharecontent",
+    "trigger": {
+        "selectors": [".share_trigger_click"],
+        "onLoad": false
+    },
     "type": "core",
     "url": "/devwidgets/newsharecontent/newsharecontent.html"
 }

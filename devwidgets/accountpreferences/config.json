@@ -8,9 +8,21 @@
         },
         "es_ES": {
             "bundle": "/devwidgets/accountpreferences/bundles/es_ES.properties"
+        },
+        "fr_FR": {
+            "bundle": "/devwidgets/accountpreferences/bundles/fr_FR.properties",
+            "description": "préférences du compte",
+            "name": "préférences du compte"
+        },
+        "nl_NL": {
+            "bundle": "/devwidgets/accountpreferences/bundles/nl_NL.properties"
         }
     },
     "id": "accountpreferences",
-    "type": "core", 
+    "trigger": {
+        "selectors": [".accountpreferences_trigger"],
+        "onLoad": false
+    },
+    "type": "core",
     "url": "/devwidgets/accountpreferences/accountpreferences.html"
 }

@@ -3,14 +3,21 @@
     "i18n": {
         "default": {
             "bundle": "/devwidgets/newaddcontent/bundles/default.properties",
-            "description": "Add resource to a site",
             "name": "Add resource"
         },
         "es_ES": {
             "bundle": "/devwidgets/newaddcontent/bundles/es_ES.properties"
+        },
+        "fr_FR": {
+            "bundle": "/devwidgets/newaddcontent/bundles/fr_FR.properties"
         }
     },
     "id": "newaddcontent",
+    "trigger": {
+        "events": ["init.newaddcontent.sakai"],
+        "selectors": [".sakai_add_content_overlay"],
+        "onLoad": false
+    },
     "type": "core",
     "url": "/devwidgets/newaddcontent/newaddcontent.html"
 }

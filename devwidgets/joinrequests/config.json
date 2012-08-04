@@ -9,7 +9,15 @@
         },
         "es_ES": {
             "bundle": "/devwidgets/joinrequests/bundles/es_ES.properties"
+        },
+        "fr_FR": {
+            "bundle": "/devwidgets/joinrequests/bundles/fr_FR.properties"
         }
+    },
+    "trigger": {
+        "events": ["init.joinrequests.sakai"],
+        "selectors": [".sakai_joinrequests_overlay"],
+        "onLoad": false
     },
     "id": "joinrequests",
     "personalportal": false,

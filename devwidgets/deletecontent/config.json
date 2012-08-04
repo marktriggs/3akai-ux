@@ -8,9 +8,16 @@
         },
         "es_ES": {
             "bundle": "/devwidgets/deletecontent/bundles/es_ES.properties"
+	},
+        "fr_FR": {
+            "bundle": "/devwidgets/deletecontent/bundles/fr_FR.properties"
         }
     },
     "id": "deletecontent",
+    "trigger": {
+        "events": ["init.deletecontent.sakai"],
+        "onLoad": false
+    },
     "type": "core",
     "url": "/devwidgets/deletecontent/deletecontent.html"
 }

@@ -152,12 +152,27 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
                     window.location = "/~" + groupid;
                 }
             } else {
+                var errorMessage = sakai.api.i18n.getValueForKey("GROUP_NOT_SUCCESSFULLY_CREATED", "newcreategroup").replace(/\$\{title\}/, grouptitle);
+                if (groupData.errorMessage) {
+                    errorMessage = errorMessage + sakai.api.i18n.getValueForKey(groupData.errorMessage, "newcreategroup");
+                }
                 $newcreategroupContainer.find("select, input, textarea:not([class*='as-input']), button").removeAttr("disabled");
                 sakai.api.Util.progressIndicator.hideProgressIndicator();
                 sakai.api.Util.notification.show(sakai.api.i18n.getValueForKey("AN_ERROR_OCCURRED", "newcreategroup"),
-                    sakai.api.i18n.getValueForKey("GROUP_NOT_SUCCESSFULLY_CREATED", "newcreategroup").replace(/\$\{title\}/, grouptitle),
+                    errorMessage,
                     sakai.api.Util.notification.type.ERROR);
             }
+        });
+    };
+
+    /**
+     * Intialize the add people widget
+     * @param {Boolean} openDialog Whether you want to open the dialog
+     */
+    var initializeAddPeople = function(openDialog) {
+        $(document).trigger('init.addpeople.sakai', {
+            editingGroup: false,
+            openDialog: openDialog
         });
     };
 
@@ -165,11 +180,15 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
      * Add binding to the elements and validate the forms on submit
      */
     var addBinding = function(){
-        $.validator.addMethod("uniquegroupname", function(value, element){
-            return !sakai.api.Groups.checkIfGroupExists(value);
-        }, sakai.api.i18n.getValueForKey("THIS_GROUP_HAS_BEEN_TAKEN", "newcreategroup"));
-
         var validateOpts = {
+            'methods': {
+                'uniquegroupname': {
+                    'method': function(value, element) {
+                        return !sakai.api.Groups.checkIfGroupExists(value);
+                    },
+                    'text': sakai.api.i18n.getValueForKey('THIS_GROUP_HAS_BEEN_TAKEN', 'newcreategroup')
+                }
+            },
             rules: {
                 newcreategroup_title: {
                     maxlength: 255
@@ -199,41 +218,58 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
             renderShareMessage();
         });
 
-        $newcreategroupAddPeople.live("click", function(){
-            $(window).trigger("init.addpeople.sakai", [tuid, false]);
-        });
+        $(document).on('click', '.newcreategroup_add_people', initializeAddPeople);
+
+        // We also need to intialize the add people widget but not show the dialog
+        // when there is a query parameter called 'members'
+        if ($.bbq.getState('members')) {
+            initializeAddPeople(false);
+        }
+
     };
 
     /**
      * Initialize the create group widget
      */
     var doInit = function(){
-        currentTemplate = $.extend(true, {}, sakai.api.Groups.getTemplate(widgetData.category, widgetData.id));
-        currentTemplate.roles = sakai.api.Groups.getRoles(currentTemplate, true);
-        getTranslatedRoles();
-        templatePath = "/var/templates/worlds/" + widgetData.category + "/" + widgetData.id;
-        $(".newcreategroup_template_name", $rootel).text(sakai.api.i18n.getValueForKey(currentTemplate.title));
-        if(widgetData.singleTemplate === true){
-            $newcreategroupCancelCreateButton.hide();
-        }
-        $newcreategroupSuggestedURLBase.text(sakai.api.Util.applyThreeDots(window.location.protocol + "//" + window.location.host + "/~", 105, {"middledots": true}, null, true));
-        $newcreategroupSuggestedURLBase.attr("title", window.location.protocol + "//" + window.location.host + "/~");
+        sakai.api.Groups.getTemplate(widgetData.category, widgetData.id, function(success, template, templates) {
+            if (success) {
+                currentTemplate = $.extend(true, {}, template);
+                currentTemplate.roles = sakai.api.Groups.getRoles(currentTemplate, true);
+                getTranslatedRoles();
+                templatePath = '/var/templates/worlds/' + widgetData.category + '/' + widgetData.id;
+                $('.newcreategroup_template_name', $rootel).text(sakai.api.i18n.getValueForKey(currentTemplate.title));
+                if (widgetData.singleTemplate === true) {
+                    $newcreategroupCancelCreateButton.hide();
+                }
+                $newcreategroupSuggestedURLBase.text(
+                    sakai.api.Util.applyThreeDots(window.location.protocol + '//' + window.location.host + '/~', 105, {
+                        'middledots': true
+                    }, null, true)
+                );
+                $newcreategroupSuggestedURLBase.attr('title', window.location.protocol + '//' + window.location.host + '/~');
 
-        var category = false;
-        for (var i = 0; i < sakai.config.worldTemplates.length; i++){
-            if (sakai.config.worldTemplates[i].id === widgetData.category){
-                category = sakai.config.worldTemplates[i];
-                break;
+                var category = false;
+                for (var i = 0; i < templates.length; i++) {
+                    if (templates[i].id === widgetData.category) {
+                        category = templates[i];
+                        break;
+                    }
+                }
+                var defaultaccess = currentTemplate.defaultaccess || sakai.config.Permissions.Groups.defaultaccess;
+                var defaultjoin = currentTemplate.defaultjoin || sakai.config.Permissions.Groups.defaultjoin;
+
+                $('#newcreategroup_can_be_found_in option[value="' + defaultaccess + '"]', $rootel).attr('selected', 'selected');
+                $('#newcreategroup_membership option[value="' + defaultjoin + '"]', $rootel).attr('selected', 'selected');
+
+                sakai_global.selecttemplate.currentTemplate = currentTemplate;
+
+                $newcreategroupContainer.show();
+                addBinding();
+            } else {
+                debug.error('Could not get the group template');
             }
-        }
-        var defaultaccess =  currentTemplate.defaultaccess || sakai.config.Permissions.Groups.defaultaccess;
-        var defaultjoin = currentTemplate.defaultjoin || sakai.config.Permissions.Groups.defaultjoin;
-
-        $("#newcreategroup_can_be_found_in option[value='" + defaultaccess + "']", $rootel).attr("selected", "selected");
-        $("#newcreategroup_membership option[value='" + defaultjoin + "']", $rootel).attr("selected", "selected");
-
-        $newcreategroupContainer.show();
-        addBinding();
+        });
     };
 
     $newcreategroupCancelCreateButton.bind("click", function(){
@@ -241,25 +277,23 @@ require(["jquery", "sakai/sakai.api.core"], function($, sakai) {
     });
 
     $(window).bind("toadd.addpeople.sakai", function(ev, initTuid, users){
-        if (initTuid === tuid) {
-            selectedUsers = $.extend(true, {}, users);
-            $newcreategroupMembersAddedContainer.html(sakai.api.Util.TemplateRenderer(newcreategroupMembersSelectedTemplate, {
-                "users": selectedUsers,
-                "roles": currentTemplate.roles,
-                "sakai": sakai
-            }));
-            var count = 0;
-            for (var item in selectedUsers) {
-                count++;
-            }
-            if (count) {
-                renderShareMessage();
-                $newcreategroupGroupMembersNoneAddedContainer.hide();
-                $newcreategroupMembersAddedContainer.show();
-            } else {
-                $newcreategroupGroupMembersNoneAddedContainer.show();
-                $newcreategroupMembersAddedContainer.hide();
-            }
+        selectedUsers = $.extend(true, {}, users);
+        $newcreategroupMembersAddedContainer.html(sakai.api.Util.TemplateRenderer(newcreategroupMembersSelectedTemplate, {
+            "users": selectedUsers,
+            "roles": currentTemplate.roles,
+            "sakai": sakai
+        }));
+        var count = 0;
+        for (var item in selectedUsers) {
+            count++;
+        }
+        if (count) {
+            renderShareMessage();
+            $newcreategroupGroupMembersNoneAddedContainer.hide();
+            $newcreategroupMembersAddedContainer.show();
+        } else {
+            $newcreategroupGroupMembersNoneAddedContainer.show();
+            $newcreategroupMembersAddedContainer.hide();
         }
     });
 

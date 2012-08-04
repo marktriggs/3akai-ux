@@ -174,9 +174,6 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
                 $(window).trigger('lhnav.addHashParam', [{'q': '', 'refine': ''}]);
             } else {
                 url = facetedurl;
-                if (url.indexOf('.infinity.json') === -1) {
-                    url = url.replace('.json', '.infinity.json');
-                }
                 $(window).trigger('lhnav.addHashParam', [{'q': params.q, 'refine': params.refine}]);
             }
 
@@ -193,11 +190,23 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
             }, function(items, total){
                 // Adjust display global total
                 $(searchConfig.global.numberFound, $rootel).text("" + total);
+                if (total === 1) {
+                    $(searchConfig.global.numberFound, $rootel).next('span.s3d-aural-text').text(
+                        '' + sakai.api.i18n.getValueForKey('PERSON_FOUND', 'searchpeople')
+                    );
+                } else {
+                    $(searchConfig.global.numberFound, $rootel).next('span.s3d-aural-text').text(
+                        '' + sakai.api.i18n.getValueForKey('PEOPLE_FOUND', 'searchpeople')
+                    );
+                }
                 return sakai.api.Util.TemplateRenderer(searchConfig.results.template, {
                     "items": items,
                     "sakai": sakai
                 });
-            }, handleEmptyResultList, sakai.config.URL.INFINITE_LOADING_ICON, renderResults, false, false, function(data){
+            }, handleEmptyResultList, sakai.config.URL.INFINITE_LOADING_ICON, renderResults, function(){
+                // adjust height of grid row elements to be equal
+                sakai_global.data.search.determineAdjustGridElementHeights($rootel);
+            }, false, function(data){
                 // Generate refine by tags
                 sakai_global.data.search.generateTagsRefineBy(data, params);
             });
@@ -215,8 +224,7 @@ require(["jquery", "sakai/sakai.api.core", "/dev/javascript/search_util.js"], fu
             sakai_global.data.search.getMyContacts();
             $('.sakai_addtocontacts_overlay').each(function(index) {
                 if ($(this).attr("sakai-entityid") === userToAdd.uuid){
-                    $(this).hide();
-                    $("#searchpeople_result_left_filler_"+userToAdd.uuid).show();
+                    $(this).addClass('fl-hidden');
                 }
             });
         });

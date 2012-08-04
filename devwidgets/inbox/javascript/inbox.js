@@ -166,6 +166,7 @@ require(["jquery", "sakai/sakai.api.core", "underscore"], function($, sakai, _) 
                 determineInviteStatus(messageToShow);
             }
             $inbox_box_title.text(sakai.api.Util.applyThreeDots(messageToShow.subject, 310, false, false, true));
+            sakai.api.Util.setPageTitle(': ' + messageToShow.subject);
             sakai.api.Util.TemplateRenderer($inbox_show_message_template, {
                 message:messageToShow,
                 me: {
@@ -192,7 +193,7 @@ require(["jquery", "sakai/sakai.api.core", "underscore"], function($, sakai, _) 
         var showNewMessage = function() {
             $(listViewClass).hide();
             $(detailViewClass).hide();
-            $(window).trigger("initialize.sendmessage.sakai", [null, $inbox_new_message_sendmessage, sendMessageFinished]);
+            $(document).trigger('initialize.sendmessage.sakai', [null, $inbox_new_message_sendmessage, sendMessageFinished]);
             $inbox_box_title.text(sakai.api.i18n.getValueForKey("NEW_MESSAGE", "inbox"));
             $(newMessageViewClass).show();
         };
@@ -342,7 +343,7 @@ require(["jquery", "sakai/sakai.api.core", "underscore"], function($, sakai, _) 
             if(currentMessage.subject.substring(0, replyText.length) !== replyText){
                 messageSubject = replyText + " " + currentMessage.subject;
             }
-            $(window).trigger("initialize.sendmessage.sakai", [currentMessage.replyAll, $inbox_show_message_reply_fields, handleReplyFinished, messageSubject, null, true, currentMessage.id, replyButtonText]);
+            $(document).trigger('initialize.sendmessage.sakai', [currentMessage.replyAll, $inbox_show_message_reply_fields, handleReplyFinished, messageSubject, null, true, currentMessage.id, replyButtonText]);
             $inbox_show_message_reply_fields.show();
         };
 
@@ -429,6 +430,7 @@ require(["jquery", "sakai/sakai.api.core", "underscore"], function($, sakai, _) 
          * Set the initial state of this box/category combo
          */
         var setInitialState = function(callback) {
+            sakai.api.Util.setPageTitle();
             $(detailViewClass).hide();
             $(newMessageViewClass).hide();
             $inbox_box_title.text(sakai.api.i18n.General.process(widgetData.title, "inbox"));
@@ -514,6 +516,8 @@ require(["jquery", "sakai/sakai.api.core", "underscore"], function($, sakai, _) 
                     setInitialState();
                     getMessages();
                 }
+            } else if (!$.bbq.getState('message') && !$.bbq.getState('newmessage')){
+                setInitialState();
             }
         };
 

@@ -9,10 +9,13 @@
         },
         "es_ES": {
             "bundle": "/devwidgets/contacts/bundles/es_ES.properties"
+        },
+        "fr_FR": {
+            "bundle": "/devwidgets/contacts/bundles/fr_FR.properties"
         }
     },
     "id": "contacts",
     "personalportal": false,
     "type": "sakai",
-    "url": "/devwidgets/contacts/contacts.html"    
+    "url": "/devwidgets/contacts/contacts.html"
 }

@@ -9,7 +9,14 @@
         },
         "es_ES": {
             "bundle": "/devwidgets/userpermissions/bundles/es_ES.properties"
+        },
+        "fr_FR": {
+            "bundle": "/devwidgets/userpermissions/bundles/fr_FR.properties"
         }
+    },
+    "trigger": {
+        "events": ["init.userpermissions.sakai"],
+        "onLoad": false
     },
     "id": "userpermissions",
     "personalportal": false,

@@ -11,9 +11,17 @@
         },
         "zh_CN": {
             "bundle": "/devwidgets/sendmessage/bundles/zh_CN.properties"
+        },
+        "fr_FR": {
+            "bundle": "/devwidgets/sendmessage/bundles/fr_FR.properties"
         }
     },
     "id": "sendmessage",
+    "trigger": {
+        "events": ["initialize.sendmessage.sakai"],
+        "selectors": [".sakai_sendmessage_overlay"],
+        "onLoad": false
+    },
     "type": "core",
     "url": "/devwidgets/sendmessage/sendmessage.html"
 }
